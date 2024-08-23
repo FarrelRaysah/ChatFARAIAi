@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Bot UI</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="user-info">
+                <img src="https://lumin-ai.xyz/user-avatar.png" alt="User Avatar" class="avatar">
+                <div class="user-details">
+                    <h2>ChatFARAI By FARAI Innovations</h2>
+                    <p id="status">Online</p>
+                </div>
+            </div>
+        </div>
+        <div class="chat-body" id="chat-body">
+            <!-- Chat messages will be appended here -->
+        </div>
+        <div class="chat-footer">
+            <div class="input-container">
+                <input type="text" id="chat-input" placeholder="Type a message" oninput="checkInput()" onkeypress="handleKeyPress(event)">
+            </div>
+            <button class="send-btn" id="send-btn" onclick="sendMessage()" disabled>Send</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
