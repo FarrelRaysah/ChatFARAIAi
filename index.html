@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -82,9 +81,11 @@
       }
 
       function showSpinner() {
-        const spinner = document.createElement("div");
-        spinner.className = "spinner";
-        chatbox.appendChild(spinner);
+        if (!chatbox.querySelector(".spinner")) {
+          const spinner = document.createElement("div");
+          spinner.className = "spinner";
+          chatbox.appendChild(spinner);
+        }
       }
 
       function hideSpinner() {
@@ -132,12 +133,16 @@
 
       async function generateImage(prompt) {
         try {
-          const response = await fetch("https://backend.buildpicoapps.com/aero/run/image-generation-api?pk=v1-Z0FBQUFBQm5CUl9nTjBDSDVFdjFIZVJ0X0NublREV3REN3g2dmw5OGdHZFR2Vk1tcWlXbmcxVnhfY3NaUzRqR0N1WW0zYm5ESlJFMUZ1NnhHUzRJLVhLeHQ4eE5ocFp0UXc9PQ==", {
+          // Disable input and button while generating
+          messageInput.disabled = true;
+          sendButton.disabled = true;
+          showSpinner(); // Show spinner when starting the request     
+          const response = await fetch("https://backend.buildpicoapps.com/aero/run/image-generation-api?pk=v1-Z0FBQUFBQm5CZW9MRUtQVW1WX2hCZl94YkNOM213eV9fNjhwWWhHdTZtMTVLZ0FHWWVwTEgxcWtpTnhjNF9fS19PbU9hTW51Q3EteDh1Si1YYXUxUElSV0Qxb19fTnJUUmc9PQ==", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ prompt: prompt }),
+            body: JSON.stringify({ prompt: prompt }), // Adjust body format
           });
 
           const data = await response.json();
@@ -147,18 +152,26 @@
             img.src = data.imageUrl;
             img.className = "rounded-lg my-2.5";
             imageMessage.appendChild(img);
+            // Ensure the chatbox receives only one image message
+            if (chatbox.querySelector(".image-message")) {
+              chatbox.removeChild(chatbox.querySelector(".image-message"));
+            }
+            imageMessage.className += " image-message"; // tag this message for removal
             chatbox.appendChild(imageMessage);
           } else {
-            const errorMessage = createMessageElement("Error generating image. Please try again.", "left");
+            const errorMessage = createMessageElement("Error generating image. Please try again. Use <<image-generation-api>> to ....", "left");
             chatbox.appendChild(errorMessage);
             console.error("Error generating image:", data);
           }
         } catch (error) {
           console.error("API request failed:", error);
-          const errorMessage = createMessageElement("Error generating image. Please try again.", "left");
+          const errorMessage = createMessageElement("Error generating image. Please try again. Use <<image-generation-api>> to ....", "left");
           chatbox.appendChild(errorMessage);
         } finally {
-          hideSpinner();
+          // Re-enable input and button after generating
+          messageInput.disabled = false;
+          sendButton.disabled = false;
+          hideSpinner(); // Hide spinner after processing request
           chatbox.scrollTop = chatbox.scrollHeight;
         }
       }
